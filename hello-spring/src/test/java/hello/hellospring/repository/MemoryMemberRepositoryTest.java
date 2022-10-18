@@ -1,16 +1,22 @@
 package hello.hellospring.repository;
 
 import hello.hellospring.domain.Member;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
-import org.assertj.core.api.Assertions
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
 
 class MemoryMemberRepositoryTest {
     MemoryMemberRepository repository = new MemoryMemberRepository();
+
+    @AfterEach
+    public void afterEach(){
+        repository.clearStore();
+    }
 
     @Test
     @DisplayName("result와 member는 같아야 한다")
@@ -24,6 +30,40 @@ class MemoryMemberRepositoryTest {
 //        System.out.println("result =" + (result == member));
 
 //        Assertions.assertEquals(result, member);
-        Assertions.assertThat(member).isEqualTo(result);
+        assertThat(member).isEqualTo(result);
     }
+
+    @Test
+    @DisplayName("findByName과 result는 같아야 한다")
+    public void findByName(){
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+
+
+        Member result = repository.findByName("spring1").get();
+        assertThat(member1).isEqualTo(result);
+    }
+
+    @Test
+    @DisplayName("findAll은 모든 리스트를 가져와야 한다.")
+    public void findAll(){
+        Member member1 = new Member();
+        member1.setName("spring1");
+        repository.save(member1);
+
+        Member member2 = new Member();
+        member2.setName("spring2");
+        repository.save(member2);
+
+        List<Member> result = repository.findAll();
+
+        assertThat(result.size()).isEqualTo(2);
+    }
+
 }
